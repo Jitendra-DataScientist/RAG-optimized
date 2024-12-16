@@ -48,7 +48,16 @@ if st.button("Submit"):
 
     # Retrieve the API response and extract the answer text
     try:
-        answer = json.loads(response.text)["answer"]
+        answer = json.loads(response.text)
+        # print (answer.keys())
+        # print (len(answer))
+        # for item in answer:
+        #     # print (json.loads(item).keys())
+        #     print (item)
+        #     print (type(item))
+        #     print ("\n\n\n\n\n")            
+        print (json.dumps(answer,indent=4))
+        answer = answer["answer"]
     except:
         print (f"\n\n\n{response.text}\n\n\n\n")
 
@@ -78,24 +87,35 @@ if st.button("Submit"):
     for n in num:
         for doc in documents:
             if int(doc['id']) == n:
-                show_docs.append(doc)
+                if doc not in show_docs:
+                    show_docs.append(doc)
 
     # Initialize a variable for the download button identifiers
     bt_id = 17329398437639 
 
     # Display the expanded documents with download buttons
+    # for doc in show_docs:
+
+    #     # Create an expander for each document
+    #     with st.expander(str(doc['id'])+" - "+doc['path']):
+
+    #         # Display the document content
+    #         st.write(doc['content'])
+
+    #         # Open the document file and create a download button
+    #         with open(doc['path'], 'rb') as f:
+
+    #             st.download_button("Download File", f, file_name = doc['path'].split('/')[-1], key = bt_id)
+
+    #             # Increment the identifier for the download button
+    #             bt_id = bt_id + 1
     for doc in show_docs:
-
         # Create an expander for each document
-        with st.expander(str(doc['id'])+" - "+doc['path']):
-
-            # Display the document content
-            st.write(doc['content'])
-
+        with st.expander(str(doc['id']) + " - " + doc['path']):
+            
             # Open the document file and create a download button
             with open(doc['path'], 'rb') as f:
-
-                st.download_button("Download File", f, file_name = doc['path'].split('/')[-1], key = bt_id)
-
+                st.download_button("Download File", f, file_name=doc['path'].split('/')[-1], key=bt_id)
+                
                 # Increment the identifier for the download button
-                bt_id = bt_id + 1
+                bt_id += 1

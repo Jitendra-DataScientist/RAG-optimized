@@ -27,6 +27,7 @@ import config.env_var as env_var
 
 warnings.filterwarnings('ignore')
 
+
 # Define the Item class that inherits from BaseModel
 class Item(BaseModel):
     query: str
@@ -104,11 +105,12 @@ async def api(item: Item):
     for i, res in enumerate(search_result):
         context += f"{i}\n{res.page_content}\n\n"
         mappings[i] = res.metadata.get("path")
-        list_res.append({"id": i, "path": res.metadata.get("path"), "content": res.page_content})
+        # list_res.append({"id": i, "path": res.metadata.get("path"), "content": res.page_content})
+        list_res.append({"id": i, "path": res.metadata.get("path")})
 
     # Define the system message
     rolemsg = {"role": "system",
-               "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Always reference the document ID (in brackets, e.g., [0],[1]) of the document used for a query. Use as many citations and documents as needed to answer the question."}
+               "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Always reference the document ID (in brackets, e.g., [0],[1],[2] and so on) of the document used for a query. Use as many citations and documents as needed to answer the question."}
 
     # Define the messages
     messages = [rolemsg, {"role": "user", "content": f"Documents:\n{context}\n\nQuestion: {query}"}]
@@ -117,11 +119,11 @@ async def api(item: Item):
     if use_nvidia_api:
 
         # Create the LLM instance using the Nvidia API
-        resposta = client_ai.chat.completions.create(model="meta/llama3-70b-instruct",
+        resposta = client_ai.chat.completions.create(model="meta/llama-3.3-70b-instruct",
                                                      messages=messages,
                                                      temperature=0.5,
                                                      top_p=1,
-                                                     max_tokens=1024,
+                                                     max_tokens=128000,
                                                      stream=False)
 
         # Get the response from the LLM
