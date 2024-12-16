@@ -1,0 +1,7 @@
+.env
+"Food and bevarage"/
+Food\ and\ bevarage/
+fullrag_qdrant_env/
+src/config/env_var.py
+src/__pycache__/
+src/config/__pycache__/
