@@ -121,8 +121,11 @@ async def api(item: Item):
         list_res.append({"id": i, "path": res.metadata.get("path")})
 
     # Define the system message
-    rolemsg = {"role": "system",
+    rolemsg1 = {"role": "system",
                "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Always reference the document ID (in brackets, e.g., [0],[1],[2] and so on) of the document used for a query. Use as many citations and documents as needed to answer the question."}
+    
+    rolemsg = {"role": "system",
+               "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Use as many citations and documents as needed to answer the question."}
 
     # Define the messages
     messages = [rolemsg, {"role": "user", "content": f"Documents:\n{context}\n\nQuestion: {query}"}]
