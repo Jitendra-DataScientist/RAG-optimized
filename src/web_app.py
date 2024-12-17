@@ -21,11 +21,24 @@ warnings.filterwarnings('ignore')
 st.set_page_config(page_title="Full RAG Qdrant Project", page_icon=":100:", layout="centered")
 
 # Set the title of the Streamlit application
-st.title('_:green[RAG Search]_')
-st.title('_:blue[Search with Generative AI and RAG]_')
+st.title(':red[SolvAI RAG App]')
+st.markdown('<h2 style="color: blue; font-size: 20px;">Copyright "JITENDRA KUMAR NAYAK"</h2>', unsafe_allow_html=True)
 
-# Create a text box for entering questions
-question = st.text_input("Enter a Question for the AI to Query Documents:", "")
+# Create a text box for entering question
+question = st.text_input("Enter a Question/Query:", "")
+
+
+# Create a dropdown menu
+industries = ["Select an option","Food & Beverage", "Automobiles", "Environmental & Sustainability", "Retail", "Tourism & Hospitality"]
+industry = st.selectbox("Select an industry:", industries)
+# Display warning only after user interaction
+# if "industry_dropdown" in st.session_state:
+#     if industry != "Select an option":
+#         pass
+#     elif st.session_state["industry_dropdown"] != "Select an option":
+#         st.warning("Please select a valid industry.")
+if industry == "Select an option":
+    st.warning("Please select a valid industry.")
 
 
 # Check if the "Submit" button has been clicked
@@ -33,12 +46,13 @@ if st.button("Submit"):
 
     # Display the submitted question
     st.write("The submitted question was: \"", question+"\"")
+    st.write("The referred industry was: \"", industry+"\"")
 
     # Define the API URL
     url = "http://127.0.0.1:8003/api"
 
     # Create the request payload in JSON format
-    payload = json.dumps({"query": question})
+    payload = json.dumps({"query": question, "industry": industry})
 
     # Define the request headers
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
@@ -48,14 +62,7 @@ if st.button("Submit"):
 
     # Retrieve the API response and extract the answer text
     try:
-        answer = json.loads(response.text)
-        # print (answer.keys())
-        # print (len(answer))
-        # for item in answer:
-        #     # print (json.loads(item).keys())
-        #     print (item)
-        #     print (type(item))
-        #     print ("\n\n\n\n\n")            
+        answer = json.loads(response.text)       
         print (json.dumps(answer,indent=4))
         answer = answer["answer"]
     except:
@@ -65,7 +72,7 @@ if st.button("Submit"):
     rege = re.compile("\[Document\ [0-9]+\]|\[[0-9]+\]")
 
     # Find all document references in the response
-    m = rege.findall(answer)
+    m = rege.findall(str(answer))
 
     # Initialize a list to store the document numbers
     num = []
@@ -93,22 +100,6 @@ if st.button("Submit"):
     # Initialize a variable for the download button identifiers
     bt_id = 17329398437639 
 
-    # Display the expanded documents with download buttons
-    # for doc in show_docs:
-
-    #     # Create an expander for each document
-    #     with st.expander(str(doc['id'])+" - "+doc['path']):
-
-    #         # Display the document content
-    #         st.write(doc['content'])
-
-    #         # Open the document file and create a download button
-    #         with open(doc['path'], 'rb') as f:
-
-    #             st.download_button("Download File", f, file_name = doc['path'].split('/')[-1], key = bt_id)
-
-    #             # Increment the identifier for the download button
-    #             bt_id = bt_id + 1
     for doc in show_docs:
         # Create an expander for each document
         with st.expander(str(doc['id']) + " - " + doc['path']):
