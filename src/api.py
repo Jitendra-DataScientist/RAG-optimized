@@ -106,7 +106,7 @@ async def api(item: Item):
     query = item.query
 
     # Perform similarity search
-    search_result = qdrant.similarity_search(query=query, k=3)
+    search_result = qdrant.similarity_search(query=query, k=5)
 
     # Initialize the results list, context, and mapping
     list_res = []
@@ -125,7 +125,7 @@ async def api(item: Item):
                "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Always reference the document ID (in brackets, e.g., [0],[1],[2] and so on) of the document used for a query. Use as many citations and documents as needed to answer the question."}
     
     rolemsg = {"role": "system",
-               "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Use as many citations and documents as needed to answer the question."}
+               "content": "Answer the user's question using documents provided in the context. The context contains documents that should hold an answer. Use as many citations and documents as needed to answer the question. Do not mention about the document explicitely in the answer as that would lead to data breach."}
 
     # Define the messages
     messages = [rolemsg, {"role": "user", "content": f"Documents:\n{context}\n\nQuestion: {query}"}]

@@ -47,6 +47,7 @@ if st.button("Submit"):
     # Display the submitted question
     st.write("The submitted question was: \"", question+"\"")
     st.write("The referred industry was: \"", industry+"\"")
+    st.write("Please wait, generating solution...")
 
     # Define the API URL
     url = "http://127.0.0.1:8003/api"
@@ -62,9 +63,10 @@ if st.button("Submit"):
 
     # Retrieve the API response and extract the answer text
     try:
-        answer = json.loads(response.text)       
-        print (json.dumps(answer,indent=4))
-        answer = answer["answer"]
+        complete_response = json.loads(response.text)       
+        print (json.dumps(complete_response,indent=4))
+        answer = complete_response["answer"]
+        context = complete_response["context"]
     except:
         print (f"\n\n\n{response.text}\n\n\n\n")
 
@@ -82,31 +84,23 @@ if st.button("Submit"):
         num = num + [int(s) for s in re.findall(r'\b\d+\b', n)]
 
     # Display the answer using markdown
+    st.markdown('<h2 style="font-size: 20px;">SOLUTION:</h2>', unsafe_allow_html=True)
     st.markdown(answer)
 
     # Retrieve the documents from the response context
     documents = json.loads(response.text)['context']
-
-    # Initialize a list to store the documents to be displayed
-    show_docs = []
-
-    # Add the documents corresponding to the extracted numbers to the show_docs list
-    for n in num:
-        for doc in documents:
-            if int(doc['id']) == n:
-                if doc not in show_docs:
-                    show_docs.append(doc)
+    st.markdown('<h2 style="font-size: 20px;">SOURCES:</h2>', unsafe_allow_html=True)
 
     # Initialize a variable for the download button identifiers
-    bt_id = 17329398437639 
+    bt_id = 17329398437639
 
-    for doc in show_docs:
+    for i in context:
         # Create an expander for each document
-        with st.expander(str(doc['id']) + " - " + doc['path']):
+        with st.expander(str(i['id']+1) + " - " + i['path']):
             
             # Open the document file and create a download button
-            with open(doc['path'], 'rb') as f:
-                st.download_button("Download File", f, file_name=doc['path'].split('/')[-1], key=bt_id)
+            with open(i['path'], 'rb') as f:
+                st.download_button("Download File", f, file_name=i['path'].split('/')[-1], key=bt_id)
                 
                 # Increment the identifier for the download button
                 bt_id += 1
