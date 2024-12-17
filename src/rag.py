@@ -95,7 +95,7 @@ def pptx_file_load(file_name):
 
 
 # Defines the main function for indexing documents
-def main_indexing(mypath):
+def main_indexing(mypath, collection_name):
 
     # Defines the model name to be used for creating embeddings
     model_name = "sentence-transformers/msmarco-bert-base-dot-v5"
@@ -113,9 +113,6 @@ def main_indexing(mypath):
 
     # Initializes the Qdrant client
     client = QdrantClient("http://localhost:6333")
-
-    # Defines the name of the embeddings collection
-    collection_name = "VectorDB"
 
     # If the collection already exists, deletes it
     if client.collection_exists(collection_name):
@@ -209,7 +206,16 @@ if __name__ == "__main__":
 
     # Checks if a directory path was provided
     if len(arguments) > 1:
-        main_indexing(arguments[1])
+        main_indexing(arguments[1], arguments[2])
     else:
         # If not, prints an error message
-        print("You need to provide a path to the folder with documents to index.")
+        print("You need to provide a path to the folder with documents to index, along with the collection name for the industry for the Qdrant DB.")
+
+    """
+    currently done:
+    1. python src/rag.py Food\ and\ bevarage food_n_beverage
+    2. python src/rag.py Automobile\ Industry automobile
+    3. python src/rag.py Environmental\ and\ Sustainability environmental_n_sustainability
+    4. python src/rag.py Retail retail
+    5. python src/rag.py Tourism\ and\ hospitality/ tourism_n_hospitality
+    """

@@ -31,6 +31,7 @@ warnings.filterwarnings('ignore')
 # Define the Item class that inherits from BaseModel
 class Item(BaseModel):
     query: str
+    industry: str
 
 # Define the model name (tokenizer)
 model_name = "sentence-transformers/msmarco-bert-base-dot-v5"
@@ -69,14 +70,19 @@ else:
     print("It is not possible to use an LLM.")
 
 # Create an instance to connect to the vector database
-client = QdrantClient("http://localhost:6333")
+client = QdrantClient(
+    url="http://localhost:6333",
+    timeout=60
+)
 
-# Define the collection name
-collection_name = "VectorDB"
 
-# Create a Qdrant instance to send data to the vector database
-qdrant = Qdrant(client, collection_name, hf)
-
+collection_mapping_dict = {
+    "Food & Beverage": "food_n_beverage",
+    "Automobiles": "automobile",
+    "Environmental & Sustainability": "environmental_n_sustainability",
+    "Retail": "retail",
+    "Tourism & Hospitality": "tourism_n_hospitality"
+}
 
 # Create an instance
 app = FastAPI()
@@ -84,11 +90,17 @@ app = FastAPI()
 # Define the root route with the GET method
 @app.get("/")
 async def root():
-    return {"message": "Full RAG Qdrant Project"}
+    return {"message": "SolvAI RAG framework with Qdrant vector DB. Created by Jitendra Kumar Nayak."}
 
 # Define the /api route with the POST method
 @app.post("/api")
 async def api(item: Item):
+
+    # Get the collection name
+    collection_name = collection_mapping_dict[item.industry]
+
+    # Create a Qdrant instance to send data to the vector database
+    qdrant = Qdrant(client, collection_name, hf)
 
     # Get the query from the item
     query = item.query

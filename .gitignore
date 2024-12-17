@@ -1,7 +1,19 @@
 .env
+
+# industry docs:
 "Food and bevarage"/
 Food\ and\ bevarage/
+Tourism\ and\ hospitality/
+Retail/
+Environmental\ and\ Sustainability/
+Automobile\ Industry/
+
+# virtual env:
 fullrag_qdrant_env/
+
+# NVIDEA config:
 src/config/env_var.py
+
+# python cache:
 src/__pycache__/
 src/config/__pycache__/
