@@ -106,7 +106,7 @@ async def api(item: Item):
     query = item.query
 
     # Perform similarity search
-    search_result = qdrant.similarity_search(query=query, k=3)
+    search_result = qdrant.similarity_search(query=query, k=5)
 
     # Initialize the results list, context, and mapping
     list_res = []
